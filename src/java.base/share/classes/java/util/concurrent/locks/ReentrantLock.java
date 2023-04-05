@@ -171,8 +171,13 @@ public class ReentrantLock implements Lock, java.io.Serializable {
         @ReservedStackAccess
         protected final boolean tryRelease(int releases) {
             int c = getState() - releases;
-            if (getExclusiveOwnerThread() != Thread.currentThread())
-                throw new IllegalMonitorStateException();
+            if (getExclusiveOwnerThread() != Thread.currentThread()) {
+
+                Thread ownerThread = getExclusiveOwnerThread();
+                Thread currThread = Thread.currentThread();
+
+                throw new IllegalMonitorStateException(" OwnerThread: " + ownerThread.toString() + " name=" + ownerThread.getName() + " threadID= " + ownerThread.getId() + " isVirtual=" + ownerThread.isVirtual() + " state=" + ownerThread.getState().toString() + " || currentThread: " + currThread.toString() + " name=" + currThread.getName() + " threadID= " + currThread.getId() + " isVirtual=" + currThread.isVirtual() + " state=" + currThread.getState().toString());
+                }
             boolean free = (c == 0);
             if (free)
                 setExclusiveOwnerThread(null);
